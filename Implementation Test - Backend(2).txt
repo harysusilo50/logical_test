@@ -1,0 +1,28 @@
+1. SELECT * FROM employees;
+
+2. SELECT COUNT(*) AS total_manager FROM employees WHERE job_title = "Manager";
+
+3. A. SELECT name,salary FROM employees WHERE department IN ("Sales","Marketing");
+   B. SELECT NAME,salary FROM employees WHERE department ="Sales" OR department="Marketing";
+
+4. SELECT AVG(salary) AS average_salary FROM employees WHERE YEAR(joined_date) >= YEAR(CURRENT_DATE) - 5;
+
+5. A. SELECT employee_id,name, (SELECT SUM(sales) FROM sales_data WHERE employee_id = employees.employee_id) AS total_sales FROM employees ORDER BY total_sales DESC LIMIT 5;
+
+   B. SELECT emp.employee_id,emp.name, SUM(sls.sales) AS total_sales FROM employees AS emp JOIN sales_data AS sls ON sls.employee_id = emp.employee_id GROUP BY emp.employee_id, emp.name ORDER BY total_sales DESC LIMIT 5;
+
+6. WITH DepartmentSalary AS (SELECT department, AVG(salary) AS avg_salary FROM employees GROUP BY department ORDER BY avg_salary DESC LIMIT 1)
+SELECT name,salary, DepartmentSalary.avg_salary FROM employees,DepartmentSalary WHERE employees.department = DepartmentSalary.department;
+
+7. SELECT name, (SELECT SUM(sales) FROM sales_data WHERE employee_id = employees.employee_id) as total_sales, RANK() OVER(ORDER BY total_sales DESC) AS rank FROM employees ORDER BY total_sales DESC;
+
+8. DELIMITER $$
+
+CREATE PROCEDURE SearchProcedure(department_prm VARCHAR(100))
+BEGIN
+	SELECT name,salary FROM employees WHERE department = department_prm;
+END$$
+
+DELIMITER;
+
+CALL SearchProcedure("Sales");
